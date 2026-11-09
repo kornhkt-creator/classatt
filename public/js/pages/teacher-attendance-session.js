@@ -2,7 +2,7 @@ import { apiGet, apiPost } from '/js/api.js';
 import { confirmSheet, openSheet } from '/js/bottom-sheet.js';
 import { h, param, render } from '/js/dom.js';
 import { formatDate, formatTime, studentName } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, refreshButton, runPage } from '/js/page.js';
 import { attendancePill, copyText, emptyState, pill, setBusy, toast } from '/js/ui.js';
 
 const STATUSES = [['present', 'มาเรียน'], ['late', 'มาสาย'], ['absent', 'ขาด'], ['leave', 'ลากิจ'], ['sick', 'ลาป่วย']];
@@ -140,6 +140,7 @@ runPage(async () => {
         h('button', { class: `btn sm ${selecting ? 'secondary' : 'ghost'}`, type: 'button', onclick: () => { selecting = !selecting; selected.clear(); draw(); } },
           selecting ? 'ยกเลิกการเลือก' : 'เลือกหลายคน'),
         h('button', { class: 'btn sm ghost', type: 'button', onclick: copySummary }, '📋 คัดลอกสรุป'),
+        refreshButton(load),
         h('span', { class: 'muted small' }, 'แตะที่ชื่อเพื่อแก้สถานะ (แก้ได้แม้ปิดรอบแล้ว)')),
       listHolder,
       barHolder);
@@ -147,8 +148,14 @@ runPage(async () => {
     drawBar();
   }
 
-  await loadInto(main, () => apiGet('teacher', 'attendance-session', { id }), (d) => {
-    data = d;
-    draw();
-  });
+  function load() {
+    return loadInto(main, () => apiGet('teacher', 'attendance-session', { id }), (d) => {
+      data = d;
+      selected.clear();
+      selecting = false;
+      draw();
+    });
+  }
+  autoRefresh(load);
+  await load();
 });

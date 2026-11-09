@@ -3,7 +3,7 @@ import { requirePage } from '/js/auth.js';
 import { h, qs, render } from '/js/dom.js';
 import { renderHeader, skipLink } from '/js/header.js';
 import { renderNav } from '/js/nav.js';
-import { ensureToast, errorState, skeleton } from '/js/ui.js';
+import { ensureToast, errorState, skeleton, toast } from '/js/ui.js';
 
 export function getMain() {
   return qs('#main');
@@ -19,7 +19,30 @@ export function mountShell(me, { nav = true } = {}) {
     app.append(renderNav(me.role));
   }
   ensureToast();
+  watchConnection();
   return main;
+}
+
+let watching = false;
+function watchConnection() {
+  if (watching) return;
+  watching = true;
+  window.addEventListener('offline', () => toast('ไม่มีการเชื่อมต่ออินเทอร์เน็ต', 'error'));
+  window.addEventListener('online', () => toast('กลับมาออนไลน์แล้ว'));
+}
+
+// Reload data when the user comes back to this page (switching apps / tabs), at most every `minGapMs`
+export function autoRefresh(reload, minGapMs = 30000) {
+  let last = Date.now();
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || Date.now() - last < minGapMs) return;
+    last = Date.now();
+    reload();
+  });
+}
+
+export function refreshButton(reload) {
+  return h('button', { class: 'btn ghost sm', type: 'button', 'aria-label': 'รีเฟรชข้อมูล', onclick: reload }, '↻ รีเฟรช');
 }
 
 // role: 'teacher' | 'student' | 'linked'

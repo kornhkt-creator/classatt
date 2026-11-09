@@ -2,7 +2,7 @@ import { apiGet } from '/js/api.js';
 import { checkinButtons, errorCard, resultCard } from '/js/checkin.js';
 import { h, render } from '/js/dom.js';
 import { formatDateShort, formatTime } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, runPage } from '/js/page.js';
 import { attendancePill, emptyState, progressBar, toast } from '/js/ui.js';
 import { subjectTable } from '/js/student-ui.js';
 
@@ -57,5 +57,6 @@ runPage(async () => {
           h('div', { class: 'mt' }, subjectTable(history.subjects, history.minPercent)),
           h('p', { class: 'muted small' }, history.countLeaveAsPresent ? 'การลานับเป็นเวลาเรียน' : 'การลาไม่นับเป็นเวลาเรียน')));
     });
+  autoRefresh(load);
   await load();
 });

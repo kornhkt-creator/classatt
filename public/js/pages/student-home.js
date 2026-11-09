@@ -2,7 +2,7 @@ import { apiGet } from '/js/api.js';
 import { checkinButtons, errorCard, resultCard } from '/js/checkin.js';
 import { h, render } from '/js/dom.js';
 import { formatTime, todayLabel } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, runPage } from '/js/page.js';
 import { attendancePill, emptyState, progressBar, stat } from '/js/ui.js';
 import { taskItem } from '/js/student-ui.js';
 
@@ -76,5 +76,6 @@ runPage(async () => {
           s.overdue ? h('p', { class: 'notice red mt' }, `มีงานเลยกำหนด ${s.overdue} งาน`) : null),
       ] : null);
   });
+  autoRefresh(load);
   await load();
 });

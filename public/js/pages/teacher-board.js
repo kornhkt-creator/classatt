@@ -3,7 +3,7 @@ import { openSheet } from '/js/bottom-sheet.js';
 import { h, param, render } from '/js/dom.js';
 import { formatThai, relativeDue, studentName } from '/js/format.js';
 import { openExternal } from '/js/liff.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, refreshButton, runPage } from '/js/page.js';
 import { copyText, emptyState, pill, setBusy, submissionPill, toast } from '/js/ui.js';
 
 const CHIPS = [
@@ -165,15 +165,22 @@ runPage(async () => {
         searchInput,
         h('button', { class: `btn sm ${selecting ? 'secondary' : 'ghost'}`, type: 'button', onclick: () => { selecting = !selecting; selected.clear(); draw(); } },
           selecting ? 'ยกเลิกการเลือก' : 'เลือกหลายคน'),
-        h('button', { class: 'btn sm ghost', type: 'button', onclick: copyPending }, '📋 คัดลอกรายชื่อคนค้างส่ง')),
+        h('button', { class: 'btn sm ghost', type: 'button', onclick: copyPending }, '📋 คัดลอกรายชื่อคนค้างส่ง'),
+        refreshButton(load)),
       listHolder,
       barHolder);
     drawList();
     drawBar();
   }
 
-  await loadInto(main, () => apiGet('teacher', 'board', { id }), (data) => {
-    board = data;
-    draw();
-  });
+  function load() {
+    return loadInto(main, () => apiGet('teacher', 'board', { id }), (data) => {
+      board = data;
+      selected.clear();
+      selecting = false;
+      draw();
+    });
+  }
+  autoRefresh(load);
+  await load();
 });

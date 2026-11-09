@@ -55,8 +55,22 @@ async function resolveStatic(urlPath) {
   return null;
 }
 
+// Apply the same response headers as vercel.json (so CSP problems show up locally too)
+const vercelConfig = JSON.parse(await readFile(path.join(root, 'vercel.json'), 'utf8'));
+const headerRules = (vercelConfig.headers || []).map((rule) => ({
+  re: new RegExp(`^${rule.source.replace(/\(\.\*\)/g, '.*')}$`),
+  headers: rule.headers,
+}));
+
+function applyHeaders(res, pathname) {
+  for (const rule of headerRules) {
+    if (rule.re.test(pathname)) for (const { key, value } of rule.headers) res.setHeader(key, value);
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+  applyHeaders(res, url.pathname);
   try {
     const apiMatch = url.pathname.match(/^\/api\/([a-z0-9-]+)\/?$/);
     if (apiMatch) {

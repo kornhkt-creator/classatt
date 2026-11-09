@@ -1,7 +1,7 @@
 import { apiGet } from '/js/api.js';
 import { h, render } from '/js/dom.js';
 import { formatThai, todayLabel } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, runPage } from '/js/page.js';
 import { emptyState, pill, progressBar, stat, subjectIcon } from '/js/ui.js';
 
 function assignmentItem(a) {
@@ -18,7 +18,7 @@ function assignmentItem(a) {
 runPage(async () => {
   const { main } = await initPage('teacher');
 
-  await loadInto(main, () => apiGet('teacher', 'dashboard'), (d) => {
+  const load = () => loadInto(main, () => apiGet('teacher', 'dashboard'), (d) => {
     const ts = d.todaySession;
     const w = d.workStats;
     const stats = ts
@@ -68,4 +68,6 @@ runPage(async () => {
         progressBar(progress.value, progress.label),
         h('p', { class: 'muted small', style: { margin: '9px 0 0' } }, progress.hint)));
   });
+  autoRefresh(load);
+  await load();
 });

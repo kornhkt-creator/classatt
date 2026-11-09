@@ -1,7 +1,7 @@
 import { apiGet, apiPost } from '/js/api.js';
 import { h, param, render } from '/js/dom.js';
 import { formatDateShort, formatTime } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, runPage } from '/js/page.js';
 import { emptyState, field, pill, setBusy, setFieldError, toast } from '/js/ui.js';
 
 const LATE_OPTIONS = [5, 10, 15, 20, 30];
@@ -23,7 +23,7 @@ function sessionItem(s) {
 runPage(async () => {
   const { main } = await initPage('teacher');
 
-  await loadInto(main, () => Promise.all([
+  const load = () => loadInto(main, () => Promise.all([
     apiGet('teacher', 'classrooms'), apiGet('teacher', 'subjects'), apiGet('teacher', 'attendance-sessions'),
   ]), ([{ classrooms }, { subjects }, { items }]) => {
     const subject = h('input', { maxlength: '50', list: 'att-subjects', placeholder: 'เช่น คณิตศาสตร์', required: true });
@@ -80,4 +80,6 @@ runPage(async () => {
       subject.focus();
     }
   });
+  autoRefresh(load);
+  await load();
 });

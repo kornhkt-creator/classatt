@@ -1,7 +1,7 @@
 import { apiGet } from '/js/api.js';
 import { h, param, render, setParams } from '/js/dom.js';
 import { formatThai, relativeDue } from '/js/format.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, refreshButton, runPage } from '/js/page.js';
 import { emptyState, pill, progressBar, subjectIcon } from '/js/ui.js';
 
 const FILTERS = [['open', 'เปิดรับ'], ['closed', 'ปิดแล้ว'], ['review', 'รอตรวจ']];
@@ -35,10 +35,12 @@ runPage(async () => {
           class: `btn ${key === filter ? 'secondary' : 'ghost'}`, type: 'button', 'aria-pressed': String(key === filter),
           onclick: () => { filter = key; setParams({ filter: key === 'open' ? null : key }); load(); },
         }, label)),
+        refreshButton(load),
         h('a', { class: 'btn primary', href: '/teacher/new', style: { marginLeft: 'auto' } }, '＋ สร้างงานใหม่')),
       items.length
         ? h('div', { class: 'task-list' }, items.map(item))
         : emptyState(filter === 'open' ? 'ยังไม่มีงาน กดปุ่ม ＋ เพื่อสร้างงานแรก' : filter === 'review' ? 'ไม่มีงานที่รอตรวจ 🎉' : 'ยังไม่มีงานที่ปิดแล้ว'));
   });
+  autoRefresh(load);
   await load();
 });

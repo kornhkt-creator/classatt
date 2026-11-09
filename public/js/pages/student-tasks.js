@@ -1,6 +1,6 @@
 import { apiGet } from '/js/api.js';
 import { h, param, render, setParams } from '/js/dom.js';
-import { initPage, loadInto, runPage } from '/js/page.js';
+import { autoRefresh, initPage, loadInto, refreshButton, runPage } from '/js/page.js';
 import { emptyState } from '/js/ui.js';
 import { taskItem } from '/js/student-ui.js';
 
@@ -14,13 +14,14 @@ runPage(async () => {
   const { main } = await initPage('student');
   let filter = FILTERS.some(([k]) => k === param('filter')) ? param('filter') : 'todo';
 
-  await loadInto(main, () => apiGet('student', 'assignments'), ({ items, summary }) => {
+  const load = () => loadInto(main, () => apiGet('student', 'assignments'), ({ items, summary }) => {
     const draw = () => {
       const test = FILTERS.find(([k]) => k === filter)[2];
       const shown = items.filter(test);
       render(main,
         h('div', { class: 'section-head first' },
-          h('div', {}, h('h1', { class: 'page-title' }, 'งานของฉัน'), h('span', { class: 'muted' }, `ทั้งหมด ${items.length} รายการ`))),
+          h('div', {}, h('h1', { class: 'page-title' }, 'งานของฉัน'), h('span', { class: 'muted' }, `ทั้งหมด ${items.length} รายการ`)),
+          refreshButton(load)),
         summary.overdue > 0
           ? h('p', { class: 'notice red' }, `ค้างส่ง ${summary.pending} งาน · เลยกำหนด ${summary.overdue} งาน — รีบส่งนะ!`)
           : summary.pending > 0 ? h('p', { class: 'notice' }, `ค้างส่ง ${summary.pending} งาน`) : null,
@@ -33,4 +34,6 @@ runPage(async () => {
     };
     draw();
   });
+  autoRefresh(load);
+  await load();
 });

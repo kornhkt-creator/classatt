@@ -143,6 +143,8 @@ tests/  templates/
 - เทียบรหัสด้วย `crypto.timingSafeEqual`; รหัสผิด/ไม่พบ ใช้ข้อความเดียวกัน
 - ผูกบัญชีผิดเกิน 5 ครั้ง / 15 นาที (นับจาก `link_attempts`) → 429
 - POST ต้องผ่านการตรวจ Origin (fallback Referer)
+- Security headers + CSP อยู่ใน `vercel.json` (dev server ใช้ชุดเดียวกัน) — เพิ่มโดเมนภายนอกต้องแก้ CSP และทดสอบ LIFF ใหม่ · ห้ามใส่ `'unsafe-inline'` ใน script-src · ยังไม่ตั้ง frame-ancestors จนกว่าจะทดสอบใน LINE จริง
+- ทุก op ต้องมีใน `tests/security.test.js` (401 ไม่ login / 403 role ผิด) — เพิ่ม op ใหม่ต้องเพิ่มในรายการนั้นด้วย
 - ห้าม log ID token, cookie, secret key, verify_code, reg_code
 - Mock login ยอมรับเฉพาะเมื่อครบ 3 ข้อ: `DEV_MOCK_LOGIN === "true"` + `VERCEL_ENV` ไม่ใช่ production/preview + host เป็น localhost
 - ห้าม commit `.env`, `.env*.local`, `.vercel`
@@ -184,6 +186,7 @@ tests/  templates/
 - ปุ่มสูง ≥ 44px · input font ≥ 16px · ไม่เขียน style ซ้ำในแต่ละหน้า
 - accessibility: skip link · `:focus-visible` · `aria-current="page"` ที่เมนู · `role="progressbar"` · toast `aria-live="polite"` · `prefers-reduced-motion`
 - ทุกหน้ามี loading (.skeleton), empty (.empty) และ error state ภาษาไทย · ปุ่มที่ยิง API ต้อง disabled ระหว่างรอ
+- หน้ารายการใช้ `autoRefresh(load)` (โหลดใหม่เมื่อกลับมาที่หน้า) และ `refreshButton(load)` จาก `page.js`
 
 ## Common Gotchas
 
