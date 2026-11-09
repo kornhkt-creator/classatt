@@ -19,7 +19,14 @@ describe('env', () => {
     delete process.env.SUPABASE_URL;
     delete process.env.LIFF_ID;
     expect(missingEnv()).toEqual(['SUPABASE_URL', 'LIFF_ID']);
-    expect(() => getEnv()).toThrow(/SUPABASE_URL, LIFF_ID/);
+    expect(() => getEnv()).toThrow(/SUPABASE_URL/);
+  });
+
+  it('LINE settings are optional until a real LINE login', async () => {
+    delete process.env.LINE_CHANNEL_ID;
+    expect(() => getEnv()).not.toThrow();
+    await expect(verifyIdToken('mock:U_x', fakeReq())).resolves.toMatchObject({ lineUserId: 'U_x' });
+    await expect(verifyIdToken('real-token', fakeReq())).rejects.toMatchObject({ code: 'env_missing' });
   });
 
   it('rejects a short SESSION_SECRET', () => {

@@ -1,4 +1,4 @@
-import { getEnv, missingEnv } from '../lib/env.js';
+import { getEnv, missingEnv, missingLineEnv } from '../lib/env.js';
 import { getSupabase } from '../lib/supabase.js';
 import { sendJson, withApi, HttpError } from '../lib/http.js';
 
@@ -8,7 +8,7 @@ const TABLES = ['teachers', 'students', 'assignments', 'submissions', 'link_atte
 export default withApi(async (req, res) => {
   if (req.method !== 'GET') throw new HttpError(405, 'method_not_allowed', 'วิธีเรียกใช้งานไม่ถูกต้อง');
 
-  const missing = missingEnv();
+  const missing = missingEnv(['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'SESSION_SECRET']);
   if (missing.length) {
     return sendJson(res, 500, { ok: false, error: `ยังไม่ได้ตั้งค่าตัวแปร: ${missing.join(', ')} (ดู .env.example)` });
   }
@@ -40,6 +40,7 @@ export default withApi(async (req, res) => {
     ok: missingTables.length === 0,
     supabase: 'connected',
     tables,
+    ...(missingLineEnv().length ? { warning: `ยังไม่ได้ตั้งค่า ${missingLineEnv().join(', ')} — ทดสอบบนเครื่องด้วย ?mockUser ได้ แต่ต้องตั้งก่อนเปิดผ่าน LINE จริง` } : {}),
     ...(missingTables.length ? { error: `ยังไม่มีตาราง: ${missingTables.join(', ')} — กรุณารันไฟล์ SQL ใน supabase/migrations` } : {}),
     serverTime: new Date().toISOString(),
   });
