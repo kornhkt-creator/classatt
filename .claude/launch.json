@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "classtrack-demo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/dev-server.js", "--demo"],
+      "port": 3000
+    }
+  ]
+}

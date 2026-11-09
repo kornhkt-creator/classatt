@@ -1,0 +1,25 @@
+{
+  "name": "classtrack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ClassTrack — ระบบติดตามงานและเช็กชื่อนักเรียนบน LINE Mini App",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npx vercel dev",
+    "dev:local": "node --env-file-if-exists=.env.local scripts/dev-server.js",
+    "dev:demo": "node scripts/dev-server.js --demo",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "jose": "^6.2.16",
+    "qrcode": "^1.5.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.0"
+  }
+}
