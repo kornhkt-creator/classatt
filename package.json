@@ -11,7 +11,8 @@
     "dev": "npx vercel dev",
     "dev:local": "node --env-file-if-exists=.env.local scripts/dev-server.js",
     "dev:demo": "node scripts/dev-server.js --demo",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:env": "node --env-file-if-exists=.env.local scripts/check-env.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

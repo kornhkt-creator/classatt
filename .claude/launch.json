@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["scripts/dev-server.js", "--demo"],
       "port": 3000
+    },
+    {
+      "name": "classtrack-local",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file-if-exists=.env.local", "scripts/dev-server.js"],
+      "port": 3000
     }
   ]
 }

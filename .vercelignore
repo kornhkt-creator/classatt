@@ -1,0 +1,18 @@
+# Files NOT uploaded by `npx vercel` (deploy without GitHub)
+# Secrets — never upload
+.env
+.env.*
+.vercel
+
+# Not needed on the server
+node_modules
+.git
+.claude
+tests
+design
+scripts
+supabase
+templates
+prompts.md
+*.md
+vitest.config.js
