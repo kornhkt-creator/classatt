@@ -29,6 +29,8 @@ public/  HTML CSS JS  ──fetch──► api/  JavaScript ฝั่ง server 
 
 โค้ดของ Prompt 1.1–5.1 อยู่ในโฟลเดอร์นี้แล้ว (เหลือ Prompt 5.2: deploy ขึ้น Vercel + ตั้งค่า LINE)
 
+📘 **วิธีตั้งค่าฐานข้อมูล, LINE MINI App และ deploy ทีละขั้น: ดู [DEPLOY.md](DEPLOY.md)**
+
 **ลองเล่นได้ทันทีโดยไม่ต้องมี Supabase / LINE** (ฐานข้อมูลจำลอง ข้อมูลหายเมื่อปิด):
 ```bash
 npm install
